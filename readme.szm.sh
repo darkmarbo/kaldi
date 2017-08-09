@@ -5,7 +5,9 @@ test/gdb_test.sh
     测试脚本 其中:
     v0-kaldi.bak 是原始kaldi
     v5 修改为多线程的
-    --do-endpointing=true 等于true的时候  会对输入语音进行截断 比如118.wav 开始静音特别长，直接截断了.
+    online2-wav-nnet2-latgen-faster.cc.v1.test-endpoint   测试 endpoint的 
+    --do-endpointing=true 等于true的时候  会对输入语音进行截断 
+        比如118.wav 开始静音特别长，直接截断了.
 
 
 
@@ -27,6 +29,13 @@ ok:	解决load_task 时  把所有语音的数据结构都load到内存了  占�
 ok:	时间花费 计算 定义一个全局统计 然后每次访问进行mutex  
 
 ================================  代码  =================================================
+
+ivector/voice-activity-detection.cc:  
+    ivectorbin/compute-vad.cc   内部有使用方法
+        SequentialBaseFloatMatrixReader   util/table-types.h 中  (key value) 
+            typedef SequentialTableReader<KaldiObjectHolder<Matrix<BaseFloat> > >
+                SequentialBaseFloatMatrixReader;
+    
 
 online2/online-nnet2-decoding.cc
     SingleUtteranceNnet2Decoder 类 

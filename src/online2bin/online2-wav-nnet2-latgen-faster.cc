@@ -42,6 +42,8 @@ int64 g_num_frames = 0; // 总帧数
 double g_tot_like = 0.0; // 概率和 
 int	g_speech_time;//ms
 
+FILE *fp_log = fopen("ttt.log", "w");
+
 //互斥锁  定义全局变量，让所有线程同时写，这样就需要锁机制
 pthread_mutex_t g_asr_cmd_lock;
 
@@ -219,9 +221,12 @@ void GetDiagnosticsAndPrintOutput( const std::string &utt,const fst::SymbolTable
 		<< (likelihood / num_frames) << " over " << num_frames
 		<< " frames.";
 
+	//pthread_mutex_lock(&g_asr_cmd_lock);
 	if (word_syms != NULL) 
 	{
-		std::cerr << utt << '\t';
+		//std::cerr << utt << '\t';
+		//KALDI_LOG << utt << '\t';
+        fprintf(fp_log, "%s\t", utt.c_str());
 		for (size_t i = 0; i < words.size(); i++) 
 		{
 			std::string s = word_syms->Find(words[i]);
@@ -231,10 +236,17 @@ void GetDiagnosticsAndPrintOutput( const std::string &utt,const fst::SymbolTable
 
 			}
 			//std::cerr << s << ' ';
-			std::cerr << s;
+			//std::cerr << s;
+		    //KALDI_LOG << s;
+            fprintf(fp_log, "%s", s.c_str());
 		}
-		std::cerr << std::endl;
+		//std::cerr << std::endl;
+		//KALDI_LOG << std::endl;
+        fprintf(fp_log, "\n");
+        fflush(fp_log);
 	}
+	//pthread_mutex_unlock(&g_asr_cmd_lock);
+
 }
 
 
@@ -567,6 +579,12 @@ int main(int argc, char *argv[])
 		std::cerr << e.what();
 		return -1;
 	}
+
+    //if(fp_log)
+    //{
+    //    fclose(fp_log);
+    //    fp_log = NULL;
+    //}
 
 
 } // main()
